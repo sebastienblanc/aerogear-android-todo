@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 
-package org.aerogear.proto.todos.fragments;
+package org.jboss.aerogear.todo.fragments;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aerogear.android.Callback;
-import org.aerogear.android.pipeline.Pipe;
-import org.aerogear.proto.todos.R;
-import org.aerogear.proto.todos.ToDoApplication;
-import org.aerogear.proto.todos.activities.TodoActivity;
-import org.aerogear.proto.todos.data.Tag;
+import org.jboss.aerogear.android.Callback;
+import org.jboss.aerogear.android.pipeline.Pipe;
+import org.jboss.aerogear.todo.R;
+import org.jboss.aerogear.todo.ToDoApplication;
+import org.jboss.aerogear.todo.activities.TodoActivity;
+import org.jboss.aerogear.todo.data.Task;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -42,10 +42,10 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-public class TagListFragment extends SherlockFragment {
-	private ArrayAdapter<Tag> adapter;
-	private List<Tag> tags = new ArrayList<Tag>();
-	private Pipe<Tag> pipe;
+public class TaskListFragment extends SherlockFragment {
+	private ArrayAdapter<Task> adapter;
+	private List<Task> tasks = new ArrayList<Task>();
+	private Pipe<Task> pipe;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,44 +54,44 @@ public class TagListFragment extends SherlockFragment {
 		View view = inflater.inflate(R.layout.list, null);
 
 		TextView title = (TextView) view.findViewById(R.id.title);
-		title.setText(getResources().getString(R.string.tags));
+		title.setText(getResources().getString(R.string.tasks));
 
 		ImageView add = (ImageView) view.findViewById(R.id.add);
 		add.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
-				((TodoActivity) getActivity()).showTagForm();
+				((TodoActivity) getActivity()).showTaskForm();
 			}
 		});
 
-		adapter = new ArrayAdapter<Tag>(getActivity(),
-				android.R.layout.simple_list_item_1, tags);
-		ListView tagListView = (ListView) view.findViewById(R.id.list);
-		tagListView.setAdapter(adapter);
+		adapter = new ArrayAdapter<Task>(getActivity(),
+				android.R.layout.simple_list_item_1, tasks);
+		ListView todoListView = (ListView) view.findViewById(R.id.list);
+		todoListView.setAdapter(adapter);
 
-		tagListView
+		todoListView
 				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 					public void onItemClick(AdapterView<?> adapterView,
 							View view, int position, long id) {
-						final Tag tag = tags.get(position);
-						((TodoActivity) getActivity()).showTagForm(tag);
+						final Task task = tasks.get(position);
+						((TodoActivity) getActivity()).showTaskForm(task);
 					}
 				});
 
-		tagListView
+		todoListView
 				.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 					@Override
 					public boolean onItemLongClick(AdapterView<?> adapterView,
 							View view, int position, long id) {
-						final Tag tag = tags.get(position);
+						final Task task = tasks.get(position);
 						new AlertDialog.Builder(getActivity())
-								.setMessage("Delete '" + tag.getTitle() + "'?")
+								.setMessage("Delete '" + task.getTitle() + "'?")
 								.setPositiveButton("Yes",
 										new DialogInterface.OnClickListener() {
 											@Override
 											public void onClick(
 													DialogInterface dialogInterface,
 													int i) {
-												startDelete(tag);
+												startDelete(task);
 											}
 										}).setNegativeButton("Cancel", null)
 								.show();
@@ -107,7 +107,7 @@ public class TagListFragment extends SherlockFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		pipe = ((ToDoApplication) getActivity().getApplication()).getPipeline()
-				.get("tags");
+				.get("tasks");
 	}
 
 	@Override
@@ -116,26 +116,27 @@ public class TagListFragment extends SherlockFragment {
 		startRefresh();
 	}
 
-	private void startRefresh() {
-		pipe.read(new Callback<List<Tag>>() {
+	public void startRefresh() {
+		pipe.read(new Callback<List<Task>>() {
+
 			@Override
-			public void onSuccess(List<Tag> data) {
-				tags.clear();
-				tags.addAll(data);
+			public void onSuccess(List<Task> data) {
+				tasks.clear();
+				tasks.addAll(data);
 				adapter.notifyDataSetChanged();
 			}
 
 			@Override
 			public void onFailure(Exception e) {
 				Toast.makeText(getActivity(),
-						"Error refreshing tags: " + e.getMessage(),
+						"Error refreshing tasks: " + e.getMessage(),
 						Toast.LENGTH_LONG).show();
 			}
 		});
 	}
 
-	private void startDelete(Tag tag) {
-		pipe.remove(tag.getId(), new Callback<Void>() {
+	private void startDelete(Task task) {
+		pipe.remove(task.getId(), new Callback<Void>() {
 			@Override
 			public void onSuccess(Void data) {
 				startRefresh();
@@ -144,10 +145,9 @@ public class TagListFragment extends SherlockFragment {
 			@Override
 			public void onFailure(Exception e) {
 				Toast.makeText(getActivity(),
-						"Error removing tag: " + e.getMessage(),
+						"Error removing task: " + e.getMessage(),
 						Toast.LENGTH_LONG).show();
 			}
 		});
 	}
-
 }

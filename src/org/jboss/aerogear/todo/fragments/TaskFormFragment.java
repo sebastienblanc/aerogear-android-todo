@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 
-package org.aerogear.proto.todos.fragments;
+package org.jboss.aerogear.todo.fragments;
 
 import java.util.Calendar;
 import java.util.regex.Pattern;
 
-import org.aerogear.android.Callback;
-import org.aerogear.android.pipeline.Pipe;
-import org.aerogear.proto.todos.R;
-import org.aerogear.proto.todos.ToDoApplication;
-import org.aerogear.proto.todos.activities.TodoActivity;
-import org.aerogear.proto.todos.data.Task;
+import org.jboss.aerogear.android.Callback;
+import org.jboss.aerogear.android.pipeline.Pipe;
+import org.jboss.aerogear.todo.R;
+import org.jboss.aerogear.todo.ToDoApplication;
+import org.jboss.aerogear.todo.activities.TodoActivity;
+import org.jboss.aerogear.todo.data.Task;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;

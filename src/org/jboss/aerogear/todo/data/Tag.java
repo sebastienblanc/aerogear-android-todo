@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package org.aerogear.proto.todos.data;
+package org.jboss.aerogear.todo.data;
 
-import org.aerogear.android.RecordId;
+import org.jboss.aerogear.android.RecordId;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Project implements Parcelable {
+public class Tag implements Parcelable {
 	
 	@RecordId
 	private String id;
@@ -55,10 +55,8 @@ public class Project implements Parcelable {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-		Project project = (Project) o;
-		if (title != null
-				? !title.equals(project.title)
-				: project.title != null)
+		Tag tag = (Tag) o;
+		if (title != null ? !title.equals(tag.title) : tag.title != null)
 			return false;
 		return true;
 	}
@@ -79,18 +77,18 @@ public class Project implements Parcelable {
 		parcel.writeString(title);
 	}
 
-	public static final Creator<Project> CREATOR = new Creator<Project>() {
+	public static final Parcelable.Creator<Tag> CREATOR = new Parcelable.Creator<Tag>() {
 		@Override
-		public Project createFromParcel(Parcel parcel) {
-			Project project = new Project();
-			project.id = parcel.readString();
-			project.title = parcel.readString();
-			return project;
+		public Tag createFromParcel(Parcel parcel) {
+			Tag tag = new Tag();
+			tag.id = parcel.readString();
+			tag.title = parcel.readString();
+			return tag;
 		}
 
 		@Override
-		public Project[] newArray(int size) {
-			return new Project[size];
+		public Tag[] newArray(int size) {
+			return new Tag[size];
 		}
 	};
 }

@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.aerogear.proto</groupId>
+    <groupId>org.jboss.aerogear</groupId>
     <artifactId>android-todos</artifactId>
     <version>1.0.0.M1</version>
     <packaging>apk</packaging>
@@ -53,7 +53,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.aerogear.android</groupId>
+            <groupId>org.jboss.aerogear</groupId>
             <artifactId>aerogear-android</artifactId>
 	    <type>apklib</type>
             <version>1.0.0.M1</version>

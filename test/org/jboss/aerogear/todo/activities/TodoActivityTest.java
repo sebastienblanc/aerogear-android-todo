@@ -2,15 +2,16 @@
  * Copyright (c) RedHat, 2012.
  */
 
-package org.aerogear.proto.todos.activities;
+package org.jboss.aerogear.todo.activities;
 
-import com.xtremelabs.robolectric.RobolectricTestRunner;
-import org.aerogear.proto.todos.R;
+
+import org.jboss.aerogear.todo.R;
+import org.jboss.aerogear.todo.activities.TodoActivity;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import com.xtremelabs.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class TodoActivityTest {
@@ -19,6 +20,6 @@ public class TodoActivityTest {
 	public void appNameTest() {
 		String appName = new TodoActivity().getResources().getString(
 				R.string.app_name);
-		assertThat(appName, equalTo("TODOs"));
+		Assert.assertEquals("TODOs", appName);
 	}
 }
