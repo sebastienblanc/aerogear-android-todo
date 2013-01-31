@@ -17,6 +17,7 @@
 
 package org.jboss.aerogear.todo.activities;
 
+import static android.view.WindowManager.*;
 import org.jboss.aerogear.android.Callback;
 import org.jboss.aerogear.android.http.HeaderAndBody;
 import org.jboss.aerogear.todo.R;
@@ -39,6 +40,7 @@ public class LoginActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        getWindow().setFlags(LayoutParams.FLAG_SECURE, LayoutParams.FLAG_SECURE);
 		setContentView(R.layout.login);
 	}
 
