@@ -20,8 +20,7 @@ package org.jboss.aerogear.todo.fragments;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.aerogear.android.Callback;
-import org.jboss.aerogear.android.pipeline.Pipe;
+import org.jboss.aerogear.android.pipeline.LoaderPipe;
 import org.jboss.aerogear.todo.R;
 import org.jboss.aerogear.todo.ToDoApplication;
 import org.jboss.aerogear.todo.activities.TodoActivity;
@@ -41,7 +40,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
@@ -49,7 +47,7 @@ public class ProjectListFragment extends SherlockFragment implements ListFragmen
 	
 	private ArrayAdapter<Project> adapter;
 	private List<Project> projects = new ArrayList<Project>();
-	private Pipe<Project> pipe;
+	private LoaderPipe<Project> pipe;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -122,6 +120,7 @@ public class ProjectListFragment extends SherlockFragment implements ListFragmen
 	}
 
 	public void startRefresh() {
+		pipe.reset();
 		pipe.read(new ReadCallback<Project>());
 	}
 
