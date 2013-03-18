@@ -34,6 +34,7 @@ import org.jboss.aerogear.todo.data.Task;
 
 import android.app.Activity;
 import android.app.Application;
+import android.support.v4.app.FragmentActivity;
 
 public class ToDoApplication extends Application {
 	private Pipeline pipeline;
@@ -59,20 +60,20 @@ public class ToDoApplication extends Application {
 
 			PipeConfig pipeConfigTask = new PipeConfig(baseURL, Task.class);
 			pipeConfigTask.setName("tasks");
-			pipeConfigTask.setEndpoint("tasks");
+			pipeConfigTask.setEndpoint("tasks/");
 			pipeConfigTask.setAuthModule(authModule);
 			pipeline.pipe(Task.class, pipeConfigTask);
 
 			PipeConfig pipeConfigTag = new PipeConfig(baseURL, Tag.class);
 			pipeConfigTag.setName("tags");
-			pipeConfigTag.setEndpoint("tags");
+			pipeConfigTag.setEndpoint("tags/");
 			pipeConfigTag.setAuthModule(authModule);
 			pipeline.pipe(Tag.class, pipeConfigTag);
 
 			PipeConfig pipeConfigProject = new PipeConfig(baseURL,
 					Project.class);
 			pipeConfigProject.setName("projects");
-			pipeConfigProject.setEndpoint("projects");
+			pipeConfigProject.setEndpoint("projects/");
 			pipeConfigProject.setAuthModule(authModule);
 			pipeline.pipe(Project.class, pipeConfigProject);
 		} catch (MalformedURLException e) {
@@ -85,13 +86,13 @@ public class ToDoApplication extends Application {
 		return pipeline;
 	}
 
-	public void login(Activity activity, String username, String password,
+	public void login(FragmentActivity activity, String username, String password,
 			Callback<HeaderAndBody> callback) {
 		auth.get("login", activity).login(username, password, callback);
 
 	}
 
-	public void logout(Activity activity, Callback<Void> callback) {
+	public void logout(FragmentActivity activity, Callback<Void> callback) {
 		auth.get("login", activity).logout(callback);
 	}
 
