@@ -22,6 +22,8 @@ import org.jboss.aerogear.android.pipeline.Pipe;
 import org.jboss.aerogear.todo.R;
 import org.jboss.aerogear.todo.ToDoApplication;
 import org.jboss.aerogear.todo.activities.TodoActivity;
+import org.jboss.aerogear.todo.activities.TodoActivity.Lists;
+import org.jboss.aerogear.todo.callback.SaveCallback;
 import org.jboss.aerogear.todo.data.Tag;
 
 import android.os.Bundle;
@@ -76,28 +78,17 @@ public class TagFormFragment extends Fragment {
 
 				tag.setTitle(name.getText().toString());
 
+				@SuppressWarnings("unchecked")
 				Pipe<Tag> pipe = ((ToDoApplication) getActivity()
 						.getApplication()).getPipeline().get("tags", TagFormFragment.this, getActivity().getApplicationContext());
-				pipe.save(tag, new Callback<Tag>() {
-					@Override
-					public void onSuccess(Tag data) {
-						((TodoActivity) getActivity()).showTagList();
-					}
-
-					@Override
-					public void onFailure(Exception e) {
-						Toast.makeText(getActivity(),
-								"Error saving tag: " + e.getMessage(),
-								Toast.LENGTH_LONG).show();
-					}
-				});
+				pipe.save(tag, new SaveCallback<Tag>(Lists.TAG));
 			}
 		});
 
 		buttonCancel.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				((TodoActivity) getActivity()).showTagList();
+				((TodoActivity) getActivity()).showList(Lists.TAG);
 			}
 		});
 

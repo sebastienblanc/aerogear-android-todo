@@ -25,6 +25,7 @@ import org.jboss.aerogear.android.pipeline.Pipe;
 import org.jboss.aerogear.todo.R;
 import org.jboss.aerogear.todo.ToDoApplication;
 import org.jboss.aerogear.todo.activities.TodoActivity;
+import org.jboss.aerogear.todo.callback.DeleteCallback;
 import org.jboss.aerogear.todo.callback.ListFragmentCallbackHelper;
 import org.jboss.aerogear.todo.callback.ReadCallback;
 import org.jboss.aerogear.todo.data.Project;
@@ -125,19 +126,7 @@ public class ProjectListFragment extends SherlockFragment implements ListFragmen
 	}
 
 	private void startDelete(Project project) {
-		pipe.remove(project.getId(), new Callback<Void>() {
-			@Override
-			public void onSuccess(Void data) {
-				startRefresh();
-			}
-
-			@Override
-			public void onFailure(Exception e) {
-				Toast.makeText(getActivity(),
-						"Error removing project: " + e.getMessage(),
-						Toast.LENGTH_LONG).show();
-			}
-		});
+		pipe.remove(project.getId(), new DeleteCallback());
 	}
 
 	@Override

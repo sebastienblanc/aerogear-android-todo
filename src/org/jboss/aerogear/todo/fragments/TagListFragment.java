@@ -25,9 +25,9 @@ import org.jboss.aerogear.android.pipeline.Pipe;
 import org.jboss.aerogear.todo.R;
 import org.jboss.aerogear.todo.ToDoApplication;
 import org.jboss.aerogear.todo.activities.TodoActivity;
+import org.jboss.aerogear.todo.callback.DeleteCallback;
 import org.jboss.aerogear.todo.callback.ListFragmentCallbackHelper;
 import org.jboss.aerogear.todo.callback.ReadCallback;
-import org.jboss.aerogear.todo.data.Project;
 import org.jboss.aerogear.todo.data.Tag;
 
 import android.app.AlertDialog;
@@ -125,19 +125,7 @@ public class TagListFragment extends SherlockFragment implements ListFragmentCal
 	}
 
 	private void startDelete(Tag tag) {
-		pipe.remove(tag.getId(), new Callback<Void>() {
-			@Override
-			public void onSuccess(Void data) {
-				startRefresh();
-			}
-
-			@Override
-			public void onFailure(Exception e) {
-				Toast.makeText(getActivity(),
-						"Error removing tag: " + e.getMessage(),
-						Toast.LENGTH_LONG).show();
-			}
-		});
+		pipe.remove(tag.getId(), new DeleteCallback());
 	}
 
 	@Override
