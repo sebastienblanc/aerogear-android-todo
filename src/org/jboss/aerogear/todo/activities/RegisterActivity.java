@@ -17,27 +17,23 @@
 
 package org.jboss.aerogear.todo.activities;
 
-import org.jboss.aerogear.android.Callback;
-import org.jboss.aerogear.android.http.HeaderAndBody;
 import org.jboss.aerogear.todo.R;
 import org.jboss.aerogear.todo.ToDoApplication;
+import org.jboss.aerogear.todo.callback.RegisterCallback;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class RegisterActivity extends SherlockActivity {
+public class RegisterActivity extends SherlockFragmentActivity {
 
-	protected static final String TAG = "RegisterActivity";
+	protected static final String TAG = RegisterActivity.class.getSimpleName();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -71,25 +67,9 @@ public class RegisterActivity extends SherlockActivity {
 			String role = ((Spinner) findViewById(R.id.role_spinner))
 					.getSelectedItem().toString();
 
-			((ToDoApplication) getApplication()).enroll(firstName, lastName,
+			((ToDoApplication) getApplication()).enroll(this, firstName, lastName,
 					emailAddress, username, password, role,
-					new Callback<HeaderAndBody>() {
-
-						@Override
-						public void onSuccess(HeaderAndBody data) {
-							startActivity(new Intent(getApplicationContext(),
-									TodoActivity.class));
-							finish();
-						}
-
-						@Override
-						public void onFailure(Exception e) {
-							Log.e(TAG, "There was an error enrolling", e);
-							Toast.makeText(getApplicationContext(),
-									"There was an error enrolling",
-									Toast.LENGTH_LONG).show();
-						}
-					});
+					new RegisterCallback());
 
 		}
 	}

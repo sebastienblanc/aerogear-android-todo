@@ -20,11 +20,12 @@ package org.jboss.aerogear.todo.fragments;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 
-import org.jboss.aerogear.android.Callback;
 import org.jboss.aerogear.android.pipeline.Pipe;
 import org.jboss.aerogear.todo.R;
 import org.jboss.aerogear.todo.ToDoApplication;
 import org.jboss.aerogear.todo.activities.TodoActivity;
+import org.jboss.aerogear.todo.activities.TodoActivity.Lists;
+import org.jboss.aerogear.todo.callback.SaveCallback;
 import org.jboss.aerogear.todo.data.Task;
 
 import android.app.DatePickerDialog;
@@ -40,7 +41,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 
@@ -104,20 +104,8 @@ public class TaskFormFragment extends Fragment {
 				task.setDescription(description.getText().toString());
 
 				Pipe<Task> pipe = ((ToDoApplication) getActivity()
-						.getApplication()).getPipeline().get("tasks");
-				pipe.save(task, new Callback<Task>() {
-					@Override
-					public void onSuccess(Task data) {
-						((TodoActivity) getActivity()).showTaskList();
-					}
-
-					@Override
-					public void onFailure(Exception e) {
-						Toast.makeText(getActivity(),
-								"Error saving task: " + e.getMessage(),
-								Toast.LENGTH_LONG).show();
-					}
-				});
+						.getApplication()).getPipeline().get("tasks", TaskFormFragment.this, getActivity().getApplicationContext());
+				pipe.save(task, new SaveCallback<Task>(Lists.TASK));
 			}
 		});
 
@@ -125,7 +113,7 @@ public class TaskFormFragment extends Fragment {
 		buttonCancel.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				((TodoActivity) getActivity()).showTaskList();
+				((TodoActivity) getActivity()).showList(Lists.TASK);
 			}
 		});
 

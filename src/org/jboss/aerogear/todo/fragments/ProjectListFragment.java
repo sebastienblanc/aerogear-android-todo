@@ -20,11 +20,13 @@ package org.jboss.aerogear.todo.fragments;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.aerogear.android.Callback;
-import org.jboss.aerogear.android.pipeline.Pipe;
+import org.jboss.aerogear.android.pipeline.LoaderPipe;
 import org.jboss.aerogear.todo.R;
 import org.jboss.aerogear.todo.ToDoApplication;
 import org.jboss.aerogear.todo.activities.TodoActivity;
+import org.jboss.aerogear.todo.callback.DeleteCallback;
+import org.jboss.aerogear.todo.callback.ListFragmentCallbackHelper;
+import org.jboss.aerogear.todo.callback.ReadCallback;
 import org.jboss.aerogear.todo.data.Project;
 
 import android.app.AlertDialog;
@@ -38,14 +40,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-public class ProjectListFragment extends SherlockFragment {
+public class ProjectListFragment extends SherlockFragment implements ListFragmentCallbackHelper<Project> {
+	
 	private ArrayAdapter<Project> adapter;
 	private List<Project> projects = new ArrayList<Project>();
-	private Pipe<Project> pipe;
+	private LoaderPipe<Project> pipe;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -107,8 +109,8 @@ public class ProjectListFragment extends SherlockFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		pipe = ((ToDoApplication) getActivity().getApplication()).getPipeline()
-				.get("projects");
+		ToDoApplication application = ((ToDoApplication) getActivity().getApplication());
+		pipe = application.getPipeline().get("projects", this, application);
 	}
 
 	@Override
@@ -118,36 +120,21 @@ public class ProjectListFragment extends SherlockFragment {
 	}
 
 	public void startRefresh() {
-		pipe.read(new Callback<List<Project>>() {
-			@Override
-			public void onSuccess(List<Project> data) {
-				projects.clear();
-				projects.addAll(data);
-				adapter.notifyDataSetChanged();
-			}
-
-			@Override
-			public void onFailure(Exception e) {
-				Toast.makeText(getActivity(),
-						"Error refreshing projects: " + e.getMessage(),
-						Toast.LENGTH_LONG).show();
-			}
-		});
+		pipe.reset();
+		pipe.read(new ReadCallback<Project>());
 	}
 
 	private void startDelete(Project project) {
-		pipe.remove(project.getId(), new Callback<Void>() {
-			@Override
-			public void onSuccess(Void data) {
-				startRefresh();
-			}
+		pipe.remove(project.getId(), new DeleteCallback());
+	}
 
-			@Override
-			public void onFailure(Exception e) {
-				Toast.makeText(getActivity(),
-						"Error removing project: " + e.getMessage(),
-						Toast.LENGTH_LONG).show();
-			}
-		});
+	@Override
+	public List<Project> getList() {
+		return projects;
+	}
+
+	@Override
+	public ArrayAdapter<Project> getAdapter() {
+		return adapter;
 	}
 }

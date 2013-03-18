@@ -32,12 +32,14 @@ import org.jboss.aerogear.todo.data.Project;
 import org.jboss.aerogear.todo.data.Tag;
 import org.jboss.aerogear.todo.data.Task;
 
+import android.app.Activity;
 import android.app.Application;
+import android.support.v4.app.FragmentActivity;
 
 public class ToDoApplication extends Application {
 	private Pipeline pipeline;
+	private Authenticator auth;
 
-	private AuthenticationModule authModule;
 
 	@Override
 	public void onCreate() {
@@ -47,31 +49,31 @@ public class ToDoApplication extends Application {
 		try {
 			URL baseURL = new URL(
 					"http://todoauth-aerogear.rhcloud.com/todo-server");
-			Authenticator auth = new Authenticator(baseURL);
+			auth = new Authenticator(baseURL);
 			AuthenticationConfig config = new AuthenticationConfig();
 			config.setEnrollEndpoint("/auth/register");
 
-			authModule = auth.auth("login", config);
+			AuthenticationModule authModule = auth.auth("login", config);
 
-			// Set up Pipelinejoh
+			// Set up Pipeline
 			pipeline = new Pipeline(baseURL);
 
 			PipeConfig pipeConfigTask = new PipeConfig(baseURL, Task.class);
 			pipeConfigTask.setName("tasks");
-			pipeConfigTask.setEndpoint("tasks");
+			pipeConfigTask.setEndpoint("tasks/");
 			pipeConfigTask.setAuthModule(authModule);
 			pipeline.pipe(Task.class, pipeConfigTask);
 
 			PipeConfig pipeConfigTag = new PipeConfig(baseURL, Tag.class);
 			pipeConfigTag.setName("tags");
-			pipeConfigTag.setEndpoint("tags");
+			pipeConfigTag.setEndpoint("tags/");
 			pipeConfigTag.setAuthModule(authModule);
 			pipeline.pipe(Tag.class, pipeConfigTag);
 
 			PipeConfig pipeConfigProject = new PipeConfig(baseURL,
 					Project.class);
 			pipeConfigProject.setName("projects");
-			pipeConfigProject.setEndpoint("projects");
+			pipeConfigProject.setEndpoint("projects/");
 			pipeConfigProject.setAuthModule(authModule);
 			pipeline.pipe(Project.class, pipeConfigProject);
 		} catch (MalformedURLException e) {
@@ -84,17 +86,17 @@ public class ToDoApplication extends Application {
 		return pipeline;
 	}
 
-	public void login(String username, String password,
+	public void login(FragmentActivity activity, String username, String password,
 			Callback<HeaderAndBody> callback) {
-		authModule.login(username, password, callback);
+		auth.get("login", activity).login(username, password, callback);
 
 	}
 
-	public void logout(Callback<Void> callback) {
-		authModule.logout(callback);
+	public void logout(FragmentActivity activity, Callback<Void> callback) {
+		auth.get("login", activity).logout(callback);
 	}
 
-	public void enroll(String firstName, String lastName, String emailAddress,
+	public void enroll(FragmentActivity activity, String firstName, String lastName, String emailAddress,
 			String username, String password, String role,
 			Callback<HeaderAndBody> callback) {
 
@@ -106,7 +108,7 @@ public class ToDoApplication extends Application {
 		userData.put("password", password);
 		userData.put("role", role);
 
-		authModule.enroll(userData, callback);
+		auth.get("login", activity).enroll(userData, callback);
 	}
 
 }

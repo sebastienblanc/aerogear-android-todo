@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.jboss.aerogear.todo.activities;
 
 import org.jboss.aerogear.android.Callback;
 import org.jboss.aerogear.todo.R;
 import org.jboss.aerogear.todo.ToDoApplication;
+import org.jboss.aerogear.todo.callback.LogoutCallback;
 import org.jboss.aerogear.todo.data.Project;
 import org.jboss.aerogear.todo.data.Tag;
 import org.jboss.aerogear.todo.data.Task;
@@ -44,6 +44,8 @@ import com.actionbarsherlock.view.MenuItem;
 public class TodoActivity extends SherlockFragmentActivity {
 	private FragmentTransaction fragmentTransaction;
 
+	public enum Lists {TASK, TAG, PROJECT};
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -85,28 +87,17 @@ public class TodoActivity extends SherlockFragmentActivity {
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menu_item_project :
-				showProjectList();
+				showList(Lists.PROJECT);
 				break;
 			case R.id.menu_item_tag :
-				showTagList();
+				showList(Lists.TAG);
 				break;
 			case R.id.menu_item_task :
-				showTaskList();
+				showList(Lists.TASK);
 				break;
 			case R.id.menu_logout :
 				((ToDoApplication) getApplication())
-						.logout(new Callback<Void>() {
-
-							@Override
-							public void onSuccess(Void data) {
-								finish();
-							}
-
-							@Override
-							public void onFailure(Exception e) {
-								finish();
-							}
-						});
+						.logout(this, new LogoutCallback());
 				break;
 		}
 		return super.onMenuItemSelected(featureId, item);
@@ -120,8 +111,21 @@ public class TodoActivity extends SherlockFragmentActivity {
 		transaction(R.id.project, new ProjectFormFragment(project));
 	}
 
-	public void showProjectList() {
-		transaction(R.id.project, new ProjectListFragment());
+	public void showList(Lists list) {
+		switch (list) {
+		case PROJECT:
+			transaction(R.id.project, new ProjectListFragment());
+			break;
+		case TASK:
+			transaction(R.id.task, new TaskListFragment());
+			break;
+		case TAG:
+			transaction(R.id.tag, new TagListFragment());
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	public void showTagForm() {
@@ -132,10 +136,6 @@ public class TodoActivity extends SherlockFragmentActivity {
 		transaction(R.id.tag, new TagFormFragment(tag));
 	}
 
-	public void showTagList() {
-		transaction(R.id.tag, new TagListFragment());
-	}
-
 	public void showTaskForm() {
 		transaction(R.id.task, new TaskFormFragment());
 	}
@@ -144,9 +144,6 @@ public class TodoActivity extends SherlockFragmentActivity {
 		transaction(R.id.task, new TaskFormFragment(task));
 	}
 
-	public void showTaskList() {
-		transaction(R.id.task, new TaskListFragment());
-	}
 
 	private void transaction(int tabletFragmentId, Fragment fragment) {
 		fragmentTransaction = getSupportFragmentManager().beginTransaction();

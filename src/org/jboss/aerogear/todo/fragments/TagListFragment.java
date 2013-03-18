@@ -20,11 +20,13 @@ package org.jboss.aerogear.todo.fragments;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.aerogear.android.Callback;
-import org.jboss.aerogear.android.pipeline.Pipe;
+import org.jboss.aerogear.android.pipeline.LoaderPipe;
 import org.jboss.aerogear.todo.R;
 import org.jboss.aerogear.todo.ToDoApplication;
 import org.jboss.aerogear.todo.activities.TodoActivity;
+import org.jboss.aerogear.todo.callback.DeleteCallback;
+import org.jboss.aerogear.todo.callback.ListFragmentCallbackHelper;
+import org.jboss.aerogear.todo.callback.ReadCallback;
 import org.jboss.aerogear.todo.data.Tag;
 
 import android.app.AlertDialog;
@@ -38,14 +40,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-public class TagListFragment extends SherlockFragment {
+public class TagListFragment extends SherlockFragment implements ListFragmentCallbackHelper<Tag> {
 	private ArrayAdapter<Tag> adapter;
 	private List<Tag> tags = new ArrayList<Tag>();
-	private Pipe<Tag> pipe;
+	private LoaderPipe<Tag> pipe;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -107,7 +108,7 @@ public class TagListFragment extends SherlockFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		pipe = ((ToDoApplication) getActivity().getApplication()).getPipeline()
-				.get("tags");
+				.get("tags", this, getActivity().getApplicationContext());
 	}
 
 	@Override
@@ -116,38 +117,24 @@ public class TagListFragment extends SherlockFragment {
 		startRefresh();
 	}
 
-	private void startRefresh() {
-		pipe.read(new Callback<List<Tag>>() {
-			@Override
-			public void onSuccess(List<Tag> data) {
-				tags.clear();
-				tags.addAll(data);
-				adapter.notifyDataSetChanged();
-			}
-
-			@Override
-			public void onFailure(Exception e) {
-				Toast.makeText(getActivity(),
-						"Error refreshing tags: " + e.getMessage(),
-						Toast.LENGTH_LONG).show();
-			}
-		});
+	@Override
+	public void startRefresh() {
+		pipe.reset();
+		pipe.read(new ReadCallback<Tag>());
 	}
 
 	private void startDelete(Tag tag) {
-		pipe.remove(tag.getId(), new Callback<Void>() {
-			@Override
-			public void onSuccess(Void data) {
-				startRefresh();
-			}
+		pipe.remove(tag.getId(), new DeleteCallback());
+	}
 
-			@Override
-			public void onFailure(Exception e) {
-				Toast.makeText(getActivity(),
-						"Error removing tag: " + e.getMessage(),
-						Toast.LENGTH_LONG).show();
-			}
-		});
+	@Override
+	public List<Tag> getList() {
+		return tags;
+	}
+
+	@Override
+	public ArrayAdapter<Tag> getAdapter() {
+		return adapter;
 	}
 
 }

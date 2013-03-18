@@ -20,11 +20,13 @@ package org.jboss.aerogear.todo.fragments;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.aerogear.android.Callback;
-import org.jboss.aerogear.android.pipeline.Pipe;
+import org.jboss.aerogear.android.pipeline.LoaderPipe;
 import org.jboss.aerogear.todo.R;
 import org.jboss.aerogear.todo.ToDoApplication;
 import org.jboss.aerogear.todo.activities.TodoActivity;
+import org.jboss.aerogear.todo.callback.DeleteCallback;
+import org.jboss.aerogear.todo.callback.ListFragmentCallbackHelper;
+import org.jboss.aerogear.todo.callback.ReadCallback;
 import org.jboss.aerogear.todo.data.Task;
 
 import android.app.AlertDialog;
@@ -38,14 +40,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-public class TaskListFragment extends SherlockFragment {
+public class TaskListFragment extends SherlockFragment implements ListFragmentCallbackHelper<Task> {
 	private ArrayAdapter<Task> adapter;
 	private List<Task> tasks = new ArrayList<Task>();
-	private Pipe<Task> pipe;
+	private LoaderPipe<Task> pipe;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -107,7 +108,7 @@ public class TaskListFragment extends SherlockFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		pipe = ((ToDoApplication) getActivity().getApplication()).getPipeline()
-				.get("tasks");
+				.get("tasks", this, getActivity().getApplicationContext());
 	}
 
 	@Override
@@ -117,37 +118,21 @@ public class TaskListFragment extends SherlockFragment {
 	}
 
 	public void startRefresh() {
-		pipe.read(new Callback<List<Task>>() {
-
-			@Override
-			public void onSuccess(List<Task> data) {
-				tasks.clear();
-				tasks.addAll(data);
-				adapter.notifyDataSetChanged();
-			}
-
-			@Override
-			public void onFailure(Exception e) {
-				Toast.makeText(getActivity(),
-						"Error refreshing tasks: " + e.getMessage(),
-						Toast.LENGTH_LONG).show();
-			}
-		});
+		pipe.reset();
+		pipe.read(new ReadCallback<Task>());
 	}
 
 	private void startDelete(Task task) {
-		pipe.remove(task.getId(), new Callback<Void>() {
-			@Override
-			public void onSuccess(Void data) {
-				startRefresh();
-			}
+		pipe.remove(task.getId(), new DeleteCallback());
+	}
 
-			@Override
-			public void onFailure(Exception e) {
-				Toast.makeText(getActivity(),
-						"Error removing task: " + e.getMessage(),
-						Toast.LENGTH_LONG).show();
-			}
-		});
+	@Override
+	public List<Task> getList() {
+		return tasks;
+	}
+
+	@Override
+	public ArrayAdapter<Task> getAdapter() {
+		return adapter;
 	}
 }

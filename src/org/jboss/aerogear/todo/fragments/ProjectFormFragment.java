@@ -17,13 +17,15 @@
 
 package org.jboss.aerogear.todo.fragments;
 
-import org.jboss.aerogear.android.Callback;
 import org.jboss.aerogear.android.pipeline.Pipe;
 import org.jboss.aerogear.todo.R;
 import org.jboss.aerogear.todo.ToDoApplication;
 import org.jboss.aerogear.todo.activities.TodoActivity;
+import org.jboss.aerogear.todo.activities.TodoActivity.Lists;
+import org.jboss.aerogear.todo.callback.SaveCallback;
 import org.jboss.aerogear.todo.data.Project;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -32,18 +34,26 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ProjectFormFragment extends Fragment {
 
 	private final Project project;
-
+	private Pipe<Project> pipe;
+	private ToDoApplication application;
+	
 	public ProjectFormFragment() {
 		project = new Project();
 	}
 
 	public ProjectFormFragment(Project project) {
 		this.project = project;
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		application = (ToDoApplication) activity.getApplication();
+		pipe = application.getPipeline().get("projects", this, application);
 	}
 
 	@Override
@@ -76,28 +86,15 @@ public class ProjectFormFragment extends Fragment {
 
 				project.setTitle(name.getText().toString());
 
-				Pipe<Project> pipe = ((ToDoApplication) getActivity()
-						.getApplication()).getPipeline().get("projects");
-				pipe.save(project, new Callback<Project>() {
-					@Override
-					public void onSuccess(Project data) {
-						((TodoActivity) getActivity()).showProjectList();
-					}
-
-					@Override
-					public void onFailure(Exception e) {
-						Toast.makeText(getActivity(),
-								"Error saving project: " + e.getMessage(),
-								Toast.LENGTH_LONG).show();
-					}
-				});
+				
+				pipe.save(project, new SaveCallback(Lists.PROJECT));
 			}
 		});
 
 		buttonCancel.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				((TodoActivity) getActivity()).showProjectList();
+				((TodoActivity) getActivity()).showList(Lists.PROJECT);
 			}
 		});
 
