@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.jboss.aerogear.todo.activities;
 
 import org.jboss.aerogear.android.Callback;
 import org.jboss.aerogear.todo.R;
 import org.jboss.aerogear.todo.ToDoApplication;
+import org.jboss.aerogear.todo.callback.LogoutCallback;
 import org.jboss.aerogear.todo.data.Project;
 import org.jboss.aerogear.todo.data.Tag;
 import org.jboss.aerogear.todo.data.Task;
@@ -95,18 +95,7 @@ public class TodoActivity extends SherlockFragmentActivity {
 				break;
 			case R.id.menu_logout :
 				((ToDoApplication) getApplication())
-						.logout(this, new Callback<Void>() {
-
-							@Override
-							public void onSuccess(Void data) {
-								finish();
-							}
-
-							@Override
-							public void onFailure(Exception e) {
-								finish();
-							}
-						});
+						.logout(this, new LogoutCallback());
 				break;
 		}
 		return super.onMenuItemSelected(featureId, item);

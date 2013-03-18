@@ -25,6 +25,8 @@ import org.jboss.aerogear.android.pipeline.Pipe;
 import org.jboss.aerogear.todo.R;
 import org.jboss.aerogear.todo.ToDoApplication;
 import org.jboss.aerogear.todo.activities.TodoActivity;
+import org.jboss.aerogear.todo.callback.ListFragmentCallbackHelper;
+import org.jboss.aerogear.todo.callback.ReadCallback;
 import org.jboss.aerogear.todo.data.Project;
 
 import android.app.AlertDialog;
@@ -42,7 +44,8 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-public class ProjectListFragment extends SherlockFragment {
+public class ProjectListFragment extends SherlockFragment implements ListFragmentCallbackHelper<Project> {
+	
 	private ArrayAdapter<Project> adapter;
 	private List<Project> projects = new ArrayList<Project>();
 	private Pipe<Project> pipe;
@@ -107,8 +110,8 @@ public class ProjectListFragment extends SherlockFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		pipe = ((ToDoApplication) getActivity().getApplication()).getPipeline()
-				.get("projects", this, getActivity().getApplicationContext());
+		ToDoApplication application = ((ToDoApplication) getActivity().getApplication());
+		pipe = application.getPipeline().get("projects", this, application);
 	}
 
 	@Override
@@ -118,21 +121,7 @@ public class ProjectListFragment extends SherlockFragment {
 	}
 
 	public void startRefresh() {
-		pipe.read(new Callback<List<Project>>() {
-			@Override
-			public void onSuccess(List<Project> data) {
-				projects.clear();
-				projects.addAll(data);
-				adapter.notifyDataSetChanged();
-			}
-
-			@Override
-			public void onFailure(Exception e) {
-				Toast.makeText(getActivity(),
-						"Error refreshing projects: " + e.getMessage(),
-						Toast.LENGTH_LONG).show();
-			}
-		});
+		pipe.read(new ReadCallback<Project>());
 	}
 
 	private void startDelete(Project project) {
@@ -149,5 +138,15 @@ public class ProjectListFragment extends SherlockFragment {
 						Toast.LENGTH_LONG).show();
 			}
 		});
+	}
+
+	@Override
+	public List<Project> getList() {
+		return projects;
+	}
+
+	@Override
+	public ArrayAdapter<Project> getAdapter() {
+		return adapter;
 	}
 }

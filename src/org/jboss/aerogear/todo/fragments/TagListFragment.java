@@ -25,6 +25,9 @@ import org.jboss.aerogear.android.pipeline.Pipe;
 import org.jboss.aerogear.todo.R;
 import org.jboss.aerogear.todo.ToDoApplication;
 import org.jboss.aerogear.todo.activities.TodoActivity;
+import org.jboss.aerogear.todo.callback.ListFragmentCallbackHelper;
+import org.jboss.aerogear.todo.callback.ReadCallback;
+import org.jboss.aerogear.todo.data.Project;
 import org.jboss.aerogear.todo.data.Tag;
 
 import android.app.AlertDialog;
@@ -42,7 +45,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-public class TagListFragment extends SherlockFragment {
+public class TagListFragment extends SherlockFragment implements ListFragmentCallbackHelper<Tag> {
 	private ArrayAdapter<Tag> adapter;
 	private List<Tag> tags = new ArrayList<Tag>();
 	private Pipe<Tag> pipe;
@@ -116,22 +119,9 @@ public class TagListFragment extends SherlockFragment {
 		startRefresh();
 	}
 
-	private void startRefresh() {
-		pipe.read(new Callback<List<Tag>>() {
-			@Override
-			public void onSuccess(List<Tag> data) {
-				tags.clear();
-				tags.addAll(data);
-				adapter.notifyDataSetChanged();
-			}
-
-			@Override
-			public void onFailure(Exception e) {
-				Toast.makeText(getActivity(),
-						"Error refreshing tags: " + e.getMessage(),
-						Toast.LENGTH_LONG).show();
-			}
-		});
+	@Override
+	public void startRefresh() {
+		pipe.read(new ReadCallback<Tag>());
 	}
 
 	private void startDelete(Tag tag) {
@@ -148,6 +138,16 @@ public class TagListFragment extends SherlockFragment {
 						Toast.LENGTH_LONG).show();
 			}
 		});
+	}
+
+	@Override
+	public List<Tag> getList() {
+		return tags;
+	}
+
+	@Override
+	public ArrayAdapter<Tag> getAdapter() {
+		return adapter;
 	}
 
 }
