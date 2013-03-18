@@ -96,7 +96,7 @@ public class ToDoApplication extends Application {
 		auth.get("login", activity).logout(callback);
 	}
 
-	public void enroll(Activity activity, String firstName, String lastName, String emailAddress,
+	public void enroll(FragmentActivity activity, String firstName, String lastName, String emailAddress,
 			String username, String password, String role,
 			Callback<HeaderAndBody> callback) {
 

@@ -27,11 +27,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class RegisterActivity extends SherlockActivity {
+public class RegisterActivity extends SherlockFragmentActivity {
 
 	protected static final String TAG = RegisterActivity.class.getSimpleName();
 
