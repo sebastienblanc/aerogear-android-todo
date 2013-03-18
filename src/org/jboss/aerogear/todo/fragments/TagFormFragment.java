@@ -17,7 +17,6 @@
 
 package org.jboss.aerogear.todo.fragments;
 
-import org.jboss.aerogear.android.Callback;
 import org.jboss.aerogear.android.pipeline.Pipe;
 import org.jboss.aerogear.todo.R;
 import org.jboss.aerogear.todo.ToDoApplication;
@@ -34,7 +33,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class TagFormFragment extends Fragment {
 

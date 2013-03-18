@@ -20,7 +20,6 @@ package org.jboss.aerogear.todo.fragments;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 
-import org.jboss.aerogear.android.Callback;
 import org.jboss.aerogear.android.pipeline.Pipe;
 import org.jboss.aerogear.todo.R;
 import org.jboss.aerogear.todo.ToDoApplication;
@@ -42,7 +41,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 
