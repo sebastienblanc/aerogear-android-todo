@@ -28,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.EditText;
+import org.jboss.aerogear.todo.callback.LoginCallback;
 
 public class LoginActivity extends FragmentActivity {
 
