@@ -45,11 +45,12 @@ public class ToDoApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 
-		// Set up Pipeline
+
 		try {
 
             URL baseURL = new URL("http://todo-aerogear.rhcloud.com/todo-server");
 
+            // Set up Authenticator
 			auth = new Authenticator(baseURL);
 			AuthenticationConfig config = new AuthenticationConfig();
 			config.setEnrollEndpoint("/auth/register");
