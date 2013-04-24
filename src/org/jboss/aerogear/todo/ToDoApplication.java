@@ -61,22 +61,22 @@ public class ToDoApplication extends Application {
 
 			PipeConfig pipeConfigTask = new PipeConfig(baseURL, Task.class);
 			pipeConfigTask.setName("tasks");
-			pipeConfigTask.setEndpoint("tasks/");
+			pipeConfigTask.setEndpoint("tasks");
 			pipeConfigTask.setAuthModule(authModule);
 			pipeline.pipe(Task.class, pipeConfigTask);
 
 			PipeConfig pipeConfigTag = new PipeConfig(baseURL, Tag.class);
 			pipeConfigTag.setName("tags");
-			pipeConfigTag.setEndpoint("tags/");
+			pipeConfigTag.setEndpoint("tags");
 			pipeConfigTag.setAuthModule(authModule);
 			pipeline.pipe(Tag.class, pipeConfigTag);
 
-			PipeConfig pipeConfigProject = new PipeConfig(baseURL,
-					Project.class);
+			PipeConfig pipeConfigProject = new PipeConfig(baseURL, Project.class);
 			pipeConfigProject.setName("projects");
-			pipeConfigProject.setEndpoint("projects/");
+			pipeConfigProject.setEndpoint("projects");
 			pipeConfigProject.setAuthModule(authModule);
 			pipeline.pipe(Project.class, pipeConfigProject);
+
 		} catch (MalformedURLException e) {
 			// TODO Logger?
 		}
