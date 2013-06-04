@@ -47,13 +47,6 @@
             <version>r7</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.google.android.maps</groupId>
-            <artifactId>maps</artifactId>
-            <version>17_r2</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!--  Gson: Java to Json conversion -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
